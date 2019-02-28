@@ -104,25 +104,41 @@ class Villain extends Humanoid {
         super(atts);
         this.armorName = atts.armor[0];
         this.armorRating = atts.armor[1];
+        this.mp = atts.mp;
     }
     showcase() {
         let weapons = this.weapons.join(', ');
         return `${this.name}, from the ${this.team} team, is wearing ${this.armorName} and wields ${weapons}.`;
     }
     evilSmite(enemy) {
-        let damage = 3 - enemy.armorRating;
-        enemy.healthPoints = enemy.healthPoints - damage;
-        return enemy.healthPoints <= 0 ? `${enemy.name} took ${damage} point(s) of damage. ${enemy.destroy()}` : `${this.name} bonks ${enemy.name} with his ${this.weapons[1]} for ${damage} point(s) of damage. ${enemy.name} has ${enemy.healthPoints} HP left!`;
+        let damage = 3 - enemy.armorRating,
+            magicPoints = 3; // Damage calculation
+        enemy.healthPoints = enemy.healthPoints - damage; // Deal damage
+        this.mp = this.mp + magicPoints; // Recover MP
+        return enemy.healthPoints <= 0 ? //Is enemy still alive?
+            `${enemy.name} took ${damage} point(s) of damage. ${enemy.destroy()}` //If dead
+            : // Else
+            `${this.name} bonks ${enemy.name} with his ${this.weapons[1]} for ${damage} point(s) of damage and recovers ${magicPoints} MP. (${this.name} MP: ${this.mp}) (${enemy.name} HP: ${enemy.healthPoints})`; // Display result of attack
     }
     deathRay(enemy) {
-        let damage = 5 - enemy.armorRating;
-        enemy.healthPoints = enemy.healthPoints - damage;
-        return enemy.healthPoints <= 0 ? `${enemy.name} took ${damage} point(s) of damage. ${enemy.destroy()}` : `${this.name} blasts ${enemy.name} with his ${this.weapons[0]} for ${damage} point(s) of damage. ${enemy.name} has ${enemy.healthPoints} HP left!`;
+        let damage = 5 - enemy.armorRating, // Damage calculation
+            magicPoints = 3; // MP cost for deathRay
+        if (this.mp >= magicPoints) { //Enough MP to perform deathRay?
+            enemy.healthPoints = enemy.healthPoints - damage; // If so, take away enemy's HP and...
+            this.mp = this.mp - magicPoints; // ...take away MP
+            return enemy.healthPoints <= 0 ? //Is enemy still alive?
+                `${enemy.name} took ${damage} point(s) of damage. ${enemy.destroy()}` // If dead
+                : // Else
+                `${this.name} blasts ${enemy.name} with his ${this.weapons[0]} for ${damage} point(s) of damage! (${this.name} MP: ${this.mp}) (${enemy.name} HP: ${enemy.healthPoints})`
+        } else {
+            this.mp = this.mp + magicPoints;
+            return `${this.name} doesn't have enough MP to perform deathRay, ${this.name} recovered ${magicPoints} MP instead.`;
+        }
     }
     heal() {
         let healAmount = 2;
         this.healthPoints = this.healthPoints + healAmount;
-        return `${this.name} healed ${healAmount} HP!`;
+        return `${this.name} healed ${healAmount} HP! (${this.name} HP: ${this.healthPoints})`;
     }
 }
 
@@ -140,17 +156,17 @@ class Hero extends Humanoid {
     mightySlash(enemy) {
         let damage = 5 - enemy.armorRating;
         enemy.healthPoints = enemy.healthPoints - damage;
-        return enemy.healthPoints <= 0 ? `${enemy.name} took ${damage} points of damage. ${enemy.destroy()}` : `${this.name} slashes ${enemy.name} with his ${this.weapons[0]} for ${damage} points of damage. ${enemy.name} has ${enemy.healthPoints} HP left!`;
+        return enemy.healthPoints <= 0 ? `${enemy.name} took ${damage} points of damage. ${enemy.destroy()}` : `${this.name} slashes ${enemy.name} with his ${this.weapons[0]} for ${damage} points of damage. (${enemy.name} HP: ${enemy.healthPoints})`;
     }
     secondarySlash(enemy) {
         let damage = 2 - enemy.armorRating;
         enemy.healthPoints = enemy.healthPoints - damage;
-        return enemy.healthPoints <= 0 ? `${enemy.name} took ${damage} points of damage. ${enemy.destroy()}` : `${this.name} slashes ${enemy.name} with his ${this.weapons[1]} for ${damage} points of damage. ${enemy.name} has ${enemy.healthPoints} HP left!`;
+        return enemy.healthPoints <= 0 ? `${enemy.name} took ${damage} points of damage. ${enemy.destroy()}` : `${this.name} slashes ${enemy.name} with his ${this.weapons[1]} for ${damage} points of damage. (${enemy.name} HP: ${enemy.healthPoints})`;
     }
     heal() {
         let healAmount = 2;
         this.healthPoints = this.healthPoints + healAmount;
-        return `${this.name} healed ${healAmount} HP!`;
+        return `${this.name} healed ${healAmount} HP! (${this.name} HP: ${this.healthPoints})`;
     }
 }
 
@@ -173,7 +189,8 @@ let darkdrar = new Villain({
     armor: [
         'Mage Garb',
         1,
-    ]
+    ],
+    mp: 15
 });
 
 let brellin = new Hero({
