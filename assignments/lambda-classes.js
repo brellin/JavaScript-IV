@@ -30,7 +30,7 @@ class Instructor extends Person {
         return `${student.name} recieves a perfect score on ${String}.`;
     }
     randomGrade(student) {
-        const random = (x) => Math.ceil(Math.random() * x);
+        const random = (x) => Math.ceil(Math.random() * 1.5 * x);
         student.grade = random(student.grade);
         return ` ${this.name} modified ${student.name}\'s grade to be ${student.grade}...`;
     }

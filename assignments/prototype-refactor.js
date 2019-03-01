@@ -129,7 +129,7 @@ class Villain extends Humanoid {
             return enemy.healthPoints <= 0 ? //Is enemy still alive?
                 `${enemy.name} took ${damage} point(s) of damage. ${enemy.destroy()}` // If dead
                 : // Else
-                `${this.name} blasts ${enemy.name} with his ${this.weapons[0]} for ${damage} point(s) of damage! (${this.name} MP: ${this.mp}) (${enemy.name} HP: ${enemy.healthPoints})`
+                `${this.name} blasts ${enemy.name} with his ${this.weapons[0]} for ${damage} point(s) of damage! (${this.name} MP: ${this.mp}) (${enemy.name} HP: ${enemy.healthPoints})` // Display result of attack
         } else {
             this.mp = this.mp + magicPoints;
             return `${this.name} doesn't have enough MP to perform deathRay, ${this.name} recovered ${magicPoints} MP instead.`;
@@ -137,8 +137,8 @@ class Villain extends Humanoid {
     }
     heal() {
         let healAmount = 2;
-        this.healthPoints = this.healthPoints + healAmount;
-        return `${this.name} healed ${healAmount} HP! (${this.name} HP: ${this.healthPoints})`;
+        this.healthPoints = this.healthPoints + healAmount; // Heal
+        return `${this.name} healed ${healAmount} HP! (${this.name} HP: ${this.healthPoints})`; // Display result
     }
 }
 
